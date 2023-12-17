@@ -1,8 +1,8 @@
 {
-    "name": "My plugin",
+    "name": "cheshirecat_gtt_bus_time",
     "version": "0.0.1",
-    "description": "Description of my_plugin.",
-    "author_name": "Me",
+    "description": "Fornisce orari dei pullman della GTT alla fermata del numero richiesto",
+    "author_name": "Edo",
     "author_url": "https://mywebsite.me",
     "plugin_url": "https://github.com/my_name/my_plugin",
     "tags": "cat, template, example",
