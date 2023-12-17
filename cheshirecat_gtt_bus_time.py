@@ -1,9 +1,6 @@
 import requests
 from cat.mad_hatter.decorators import tool
-from cachetools import TTLCache
 
-# Creazione di una cache con un TTL (Time To Live) di 5 minuti.
-cache = TTLCache(maxsize=100, ttl=300)
 
 @tool
 def fetch_gtt_data(stop_id, cat):
