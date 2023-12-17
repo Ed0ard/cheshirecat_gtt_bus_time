@@ -1,31 +1,25 @@
-from cat.mad_hatter.decorators import tool, hook, plugin
-from pydantic import BaseModel
-from datetime import datetime, date
+import requests
+from cat.mad_hatter.decorators import tool
+from cachetools import TTLCache
 
-class MySettings(BaseModel):
-    required_int: int
-    optional_int: int = 69
-    required_str: str
-    optional_str: str = "meow"
-    required_date: date
-    optional_date: date = 1679616000
-
-@plugin
-def settings_schema():   
-    return MySettings.schema()
+# Creazione di una cache con un TTL (Time To Live) di 5 minuti.
+cache = TTLCache(maxsize=100, ttl=300)
 
 @tool
-def get_the_day(tool_input, cat):
-    """Get the day of the week. Input is always None."""
+def fetch_gtt_data(stop_id, cat):
+    """
+    Recupera i dati in tempo reale da una fermata del GTT (Gruppo Torinese Trasporti).
 
-    dt = datetime.now()
+    Args:
+        stop_id: Identificativo della fermata di cui si vogliono ottenere i dati.
+    Returns:
+        Un dizionario contenente i dati della fermata o un messaggio di errore.
+    """
 
-    return dt.strftime('%A')
-
-@hook
-def before_cat_sends_message(message, cat):
-
-    prompt = f'Rephrase the following sentence in a grumpy way: {message["content"]}'
-    message["content"] = cat.llm(prompt)
-
-    return message
+    try:
+        response = requests.get(f"http://gpa.madbob.org/query.php?stop={stop_id}")
+        response.raise_for_status()
+        cache[stop_id] = response.json()
+        return cache[stop_id]
+    except requests.RequestException as e:
+        return {"error": str(e)}
